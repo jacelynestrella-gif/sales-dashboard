@@ -1,13 +1,44 @@
 body {
   margin: 0;
-  padding: 30px;
   font-family: Arial, sans-serif;
-  background: #111827;
-  color: #ffffff;
+  background: #0f172a;
+  color: white;
 }
 
-h1, h2 {
-  margin-bottom: 20px;
+.layout {
+  display: flex;
+}
+
+.sidebar {
+  width: 220px;
+  background: #111827;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+}
+
+.sidebar label {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.sidebar select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #1f2937;
+  color: white;
+}
+
+.content {
+  flex: 1;
+  padding: 30px;
 }
 
 .cards {
@@ -24,14 +55,14 @@ h1, h2 {
 }
 
 .card h3 {
-  margin: 0 0 10px;
   color: #9ca3af;
+  margin: 0 0 10px;
 }
 
 .card p {
   font-size: 28px;
-  font-weight: bold;
   margin: 0;
+  font-weight: bold;
 }
 
 .chart-card {
@@ -52,25 +83,22 @@ table {
 th, td {
   padding: 12px;
   border-bottom: 1px solid #374151;
-  text-align: left;
 }
 
 th {
   background: #374151;
+  text-align: left;
 }
 
 #loading {
   position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  background: #0b1120;
+  background: #0f172a;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #ffffff;
   z-index: 9999;
 }
 
@@ -81,7 +109,6 @@ th {
   border-top: 8px solid #3b82f6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 15px;
 }
 
 @keyframes spin {
