@@ -131,14 +131,16 @@ function populateFilters() {
   monthFilter.value = currentMonth;
 
   yearFilter.addEventListener("change", () => {
-    populateDealerList();
-    updateDashboard();
-  });
+  document.getElementById("dealerFilter").value = "";
+  populateDealerList();
+  updateDashboard();
+});
 
-  monthFilter.addEventListener("change", () => {
-    populateDealerList();
-    updateDashboard();
-  });
+monthFilter.addEventListener("change", () => {
+  document.getElementById("dealerFilter").value = "";
+  populateDealerList();
+  updateDashboard();
+});
 }
 
 function filterRows(rows) {
@@ -343,10 +345,19 @@ function updateDealerBreakdown(rows) {
 
   const tbody = document.getElementById("dealerBreakdownTable");
 
+  if (!rows.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5">No dealer breakdown data received for this selected Year/Month.</td>
+      </tr>
+    `;
+    return;
+  }
+
   if (!filtered.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="5">No dealer breakdown found for selected period.</td>
+        <td colspan="5">No matching dealer, brand, or order found.</td>
       </tr>
     `;
     return;
