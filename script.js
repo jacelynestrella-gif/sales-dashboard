@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbw1liweiEEsdNk34TtR4pEH0El5-1UPYSrEb1s0fZGiCK8PXRsNOda5Wxg1ddQuFzHe/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyF44l5i6C-kqwiFDIXlfmgXVCfHiastoiy9VdniI0VAqm0tgtBcC8eeBbOT-nvqDQ_/exec";
 
 let dashboardData = {};
 let salesChart;
