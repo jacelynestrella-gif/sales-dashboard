@@ -13,8 +13,9 @@ const MONTH_ORDER = [
 
 fetch(API_URL + "?t=" + Date.now())
   .then(res => res.json())
-  .then(d => console.log(d.version, d.dealerBreakdown?.length));
   .then(data => {
+    console.log(data.version, data.dealerBreakdown?.length);
+
     dashboardData = data;
 
     dashboardData.kpi = cleanRows(data.kpi || []);
