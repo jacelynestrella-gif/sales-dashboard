@@ -6,49 +6,79 @@
 </head>
 <body>
 
-  <div id="loading">
-    <div class="spinner"></div>
-    <p>Loading dashboard...</p>
-  </div>
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Loading dashboard...</p>
+</div>
 
-  <div id="dashboard" style="display:none;">
-    <h1>Sales Dashboard</h1>
+<div id="dashboard" style="display:none;">
 
-    <div class="cards">
-      <div class="card">
-        <h3>Total Sales</h3>
-        <p id="totalSales">₱0</p>
-      </div>
+  <div class="layout">
 
-      <div class="card">
-        <h3>Total Orders</h3>
-        <p id="totalOrders">0</p>
-      </div>
+    <div class="sidebar">
 
-      <div class="card">
-        <h3>Dealer Count</h3>
-        <p id="dealerCount">0</p>
-      </div>
+      <h2>Filters</h2>
+
+      <label>Year</label>
+      <select id="yearFilter">
+        <option value="ALL">All</option>
+      </select>
+
+      <label>Month</label>
+      <select id="monthFilter">
+        <option value="ALL">All</option>
+      </select>
+
     </div>
 
-    <div class="chart-card">
-      <h2>Monthly Sales</h2>
-      <canvas id="salesChart"></canvas>
+    <div class="content">
+
+      <h1>Sales Dashboard</h1>
+
+      <div class="cards">
+
+        <div class="card">
+          <h3>Total Sales</h3>
+          <p id="totalSales">₱0</p>
+        </div>
+
+        <div class="card">
+          <h3>Total Orders</h3>
+          <p id="totalOrders">0</p>
+        </div>
+
+        <div class="card">
+          <h3>Dealer Count</h3>
+          <p id="dealerCount">0</p>
+        </div>
+
+      </div>
+
+      <div class="chart-card">
+        <h2>Monthly Sales</h2>
+        <canvas id="salesChart"></canvas>
+      </div>
+
+      <h2>Top Dealers</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Dealer</th>
+            <th>Total Sales</th>
+          </tr>
+        </thead>
+        <tbody id="dealerTable"></tbody>
+      </table>
+
     </div>
 
-    <h2>Top Dealers</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Dealer</th>
-          <th>Total Sales</th>
-        </tr>
-      </thead>
-      <tbody id="dealerTable"></tbody>
-    </table>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="script.js"></script>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
