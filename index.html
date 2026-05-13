@@ -54,6 +54,35 @@
 
       </div>
 
+      <div class="grid-section">
+
+        <div class="chart-card small-chart">
+          <h2>Actual vs Target</h2>
+          <canvas id="actualTargetChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <h2>Target Balance</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Brand</th>
+                <th>Target</th>
+                <th>Actual</th>
+                <th>Balance</th>
+                <th>%</th>
+                <th>Commission</th>
+              </tr>
+            </thead>
+
+            <tbody id="brandTargetTable"></tbody>
+
+          </table>
+        </div>
+
+      </div>
+
       <div class="chart-card">
         <h2>Monthly Sales</h2>
         <canvas id="salesChart"></canvas>
@@ -68,7 +97,9 @@
             <th>Total Sales</th>
           </tr>
         </thead>
+
         <tbody id="dealerTable"></tbody>
+
       </table>
 
     </div>
