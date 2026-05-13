@@ -66,21 +66,54 @@ function populateFilters() {
     ...new Set(
       dashboardData.kpi.map(r => r["Year"]).filter(Boolean)
     )
+  ].sort();
+
+  const monthOrder = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
   ];
 
-  const months = [
-    ...new Set(
-      dashboardData.kpi.map(r => r["Month"]).filter(Boolean)
-    )
-  ];
+  yearFilter.innerHTML = `<option value="ALL">All</option>`;
+  monthFilter.innerHTML = `<option value="ALL">All</option>`;
 
   years.forEach(year => {
-    yearFilter.innerHTML += `<option value="${year}">${year}</option>`;
+    yearFilter.innerHTML += `
+      <option value="${year}">
+        ${year}
+      </option>
+    `;
   });
 
-  months.forEach(month => {
-    monthFilter.innerHTML += `<option value="${month}">${month}</option>`;
+  monthOrder.forEach(month => {
+    monthFilter.innerHTML += `
+      <option value="${month}">
+        ${month}
+      </option>
+    `;
   });
+
+  const today = new Date();
+
+  const currentYear = today.getFullYear().toString();
+
+  const currentMonth =
+    monthOrder[today.getMonth()];
+
+  if (years.includes(currentYear)) {
+    yearFilter.value = currentYear;
+  }
+
+  monthFilter.value = currentMonth;
 
   yearFilter.addEventListener("change", updateDashboard);
   monthFilter.addEventListener("change", updateDashboard);
