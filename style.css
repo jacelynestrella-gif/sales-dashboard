@@ -65,12 +65,28 @@ body {
   font-weight: bold;
 }
 
+.grid-section {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
 .chart-card {
   background: #1f2937;
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 30px;
   height: 420px;
+  box-sizing: border-box;
+}
+
+.small-chart {
+  height: 360px;
+}
+
+.chart-card canvas {
+  max-height: 300px;
 }
 
 table {
@@ -79,16 +95,23 @@ table {
   background: #1f2937;
   border-radius: 12px;
   overflow: hidden;
+  font-size: 13px;
 }
 
-th, td {
-  padding: 12px;
+th,
+td {
+  padding: 10px;
   border-bottom: 1px solid #374151;
+  text-align: left;
 }
 
 th {
   background: #374151;
-  text-align: left;
+}
+
+.total-row {
+  background: #14532d;
+  font-weight: bold;
 }
 
 #loading {
@@ -100,6 +123,7 @@ th {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: #ffffff;
   z-index: 9999;
 }
 
@@ -110,6 +134,7 @@ th {
   border-top: 8px solid #3b82f6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin-bottom: 15px;
 }
 
 @keyframes spin {
