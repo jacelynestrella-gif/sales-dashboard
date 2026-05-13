@@ -11,35 +11,63 @@ body {
 }
 
 .sidebar {
-  width: 220px;
+  width: 260px;
   background: #111827;
   min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
   border-right: 1px solid #1f2937;
+  position: sticky;
+  top: 0;
 }
 
 .sidebar h2 {
-  margin-top: 0;
-  font-size: 22px;
+  margin: 0 0 20px;
+  font-size: 20px;
 }
 
-.sidebar label {
-  display: block;
-  margin-top: 20px;
+.nav-btn {
+  width: 100%;
+  padding: 12px;
   margin-bottom: 8px;
-  font-size: 14px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
   color: #d1d5db;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-.sidebar select {
+.nav-btn:hover,
+.nav-btn.active {
+  background: #1f2937;
+  color: #ffffff;
+}
+
+.filter-box {
+  margin-top: 25px;
+  border-top: 1px solid #374151;
+  padding-top: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 8px;
+  color: #d1d5db;
+  font-size: 14px;
+}
+
+select,
+input {
   width: 100%;
   padding: 12px;
   border-radius: 10px;
   border: none;
   background: #1f2937;
   color: white;
-  font-size: 14px;
+  box-sizing: border-box;
 }
 
 .content {
@@ -49,10 +77,22 @@ body {
   overflow-x: hidden;
 }
 
-.content h1 {
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+h1 {
   margin-top: 0;
   margin-bottom: 25px;
   font-size: 30px;
+}
+
+h2 {
+  margin-top: 0;
 }
 
 .cards {
@@ -62,13 +102,19 @@ body {
   flex-wrap: wrap;
 }
 
-.card {
+.card,
+.chart-card,
+.filter-card,
+.empty-card {
   background: #1f2937;
   padding: 20px;
   border-radius: 14px;
+  box-sizing: border-box;
+}
+
+.card {
   flex: 1;
   min-width: 200px;
-  box-sizing: border-box;
 }
 
 .card h3 {
@@ -91,25 +137,27 @@ body {
 }
 
 .chart-card {
-  background: #1f2937;
-  padding: 20px;
-  border-radius: 14px;
-  box-sizing: border-box;
   min-height: 420px;
+  margin-bottom: 30px;
   overflow-x: auto;
+}
+
+.auto-height {
+  min-height: auto;
 }
 
 .small-chart {
   min-height: 360px;
 }
 
-.chart-card h2 {
-  margin-top: 0;
-}
-
 .chart-card canvas {
   width: 100% !important;
   max-height: 320px;
+}
+
+.filter-card {
+  margin-bottom: 20px;
+  max-width: 500px;
 }
 
 table {
@@ -135,6 +183,12 @@ th {
   background: #14532d;
   font-weight: bold;
 }
+
+.empty-card {
+  color: #9ca3af;
+}
+
+/* LOADING */
 
 #loading {
   position: fixed;
@@ -165,7 +219,29 @@ th {
   }
 }
 
-/* TABLET VIEW */
+/* BURGER */
+
+.burger-btn {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 10001;
+  background: #1f2937;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.overlay {
+  display: none;
+}
+
+/* TABLET */
+
 @media (max-width: 1199px) {
   .layout {
     flex-direction: column;
@@ -174,60 +250,80 @@ th {
   .sidebar {
     width: 100%;
     min-height: auto;
+    position: relative;
     display: grid;
-    grid-template-columns: 160px 1fr 1fr;
-    gap: 15px;
-    align-items: end;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
     border-right: none;
     border-bottom: 1px solid #1f2937;
   }
 
   .sidebar h2 {
-    margin: 0;
+    grid-column: 1 / -1;
   }
 
-  .sidebar label {
+  .filter-box {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .filter-box label {
     margin-top: 0;
-  }
-
-  .content {
-    padding: 20px;
   }
 
   .grid-section {
     grid-template-columns: 1fr;
   }
-
-  .card {
-    min-width: 180px;
-  }
-
-  .chart-card {
-    min-height: 380px;
-  }
 }
 
-/* MOBILE VIEW */
+/* MOBILE */
+
 @media (max-width: 767px) {
-  .content {
-    padding: 15px;
+  .burger-btn {
+    display: block;
   }
 
-  .content h1 {
-    font-size: 24px;
+  .layout {
+    flex-direction: column;
   }
 
   .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100vh;
+    min-height: 100vh;
+    z-index: 10000;
+    transition: left 0.25s ease;
     display: block;
-    padding: 15px;
+    overflow-y: auto;
   }
 
-  .sidebar label {
-    margin-top: 15px;
+  .sidebar.open {
+    left: 0;
   }
 
-  .sidebar select {
-    font-size: 16px;
+  .overlay.show {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 9999;
+  }
+
+  .content {
+    padding: 70px 15px 15px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 18px;
   }
 
   .cards {
@@ -257,10 +353,6 @@ th {
     min-height: 320px;
   }
 
-  .chart-card h2 {
-    font-size: 18px;
-  }
-
   .chart-card canvas {
     max-height: 260px;
   }
@@ -275,7 +367,7 @@ th {
     padding: 10px;
   }
 
-  h2 {
-    font-size: 18px;
+  .filter-box {
+    display: block;
   }
 }
