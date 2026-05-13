@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzpxMEt7C6tcDdmuDCwvqidENoXeP3l5F5EmLTjkadvGdzBFWQgQu2Sl2gDnbpePfzu/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw1liweiEEsdNk34TtR4pEH0El5-1UPYSrEb1s0fZGiCK8PXRsNOda5Wxg1ddQuFzHe/exec";
 
 let dashboardData = {};
 let salesChart;
@@ -43,6 +43,15 @@ function cleanRows(rows = []) {
     row["Year"] !== "Year" &&
     row["Month"] !== "Month"
   );
+}
+
+function getValue(row, keys) {
+  for (const key of keys) {
+    if (row[key] !== undefined && row[key] !== null && row[key] !== "") {
+      return row[key];
+    }
+  }
+  return "";
 }
 
 function cleanNumber(value) {
@@ -302,7 +311,7 @@ function populateDealerList() {
   const rows = filterRows(dashboardData.dealerBreakdown || []);
 
   const dealers = [...new Set(
-    rows.map(r => r["Dealer"]).filter(Boolean)
+    rows.map(r => getValue(r, ["Dealer", "DEALER", "Dealer Name", "DEALER'S NAME"])).filter(Boolean)
   )].sort();
 
   datalist.innerHTML = dealers.map(dealer =>
@@ -321,9 +330,9 @@ function updateDealerBreakdown(rows) {
     .trim();
 
   const filtered = rows.filter(row => {
-    const dealer = String(row["Dealer"] || "").toLowerCase();
-    const brand = String(row["Brand"] || "").toLowerCase();
-    const order = String(row["Order"] || "").toLowerCase();
+    const dealer = String(getValue(row, ["Dealer", "DEALER", "Dealer Name", "DEALER'S NAME"])).toLowerCase();
+    const brand = String(getValue(row, ["Brand", "BRAND"])).toLowerCase();
+    const order = String(getValue(row, ["Order", "ORDER"])).toLowerCase();
 
     if (!searchValue) return true;
 
@@ -343,15 +352,23 @@ function updateDealerBreakdown(rows) {
     return;
   }
 
-  tbody.innerHTML = filtered.map(row => `
-    <tr>
-      <td>${row["Dealer"] || ""}</td>
-      <td>${row["Brand"] || ""}</td>
-      <td>${row["Order"] || ""}</td>
-      <td>${cleanNumber(row["Total Qty"]).toLocaleString()}</td>
-      <td>${formatPeso(row["Total Sales"])}</td>
-    </tr>
-  `).join("");
+  tbody.innerHTML = filtered.map(row => {
+    const dealer = getValue(row, ["Dealer", "DEALER", "Dealer Name", "DEALER'S NAME"]);
+    const brand = getValue(row, ["Brand", "BRAND"]);
+    const order = getValue(row, ["Order", "ORDER"]);
+    const qty = getValue(row, ["Total Qty", "TOTAL QTY", "Qty", "QTY"]);
+    const sales = getValue(row, ["Total Sales", "TOTAL SALES", "Sales", "TOTAL"]);
+
+    return `
+      <tr>
+        <td>${dealer}</td>
+        <td>${brand}</td>
+        <td>${order}</td>
+        <td>${cleanNumber(qty).toLocaleString()}</td>
+        <td>${formatPeso(sales)}</td>
+      </tr>
+    `;
+  }).join("");
 }
 
 function updateBrandChart(rows) {
