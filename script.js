@@ -6,8 +6,12 @@ fetch(API_URL)
     const rows = data.filter(row => row["TOTAL"]);
 
     const totalSales = rows.reduce((sum, row) => {
-      return sum + Number(row["TOTAL"] || 0);
-    }, 0);
+  const value = cleanNumber(row["TOTAL"]);
+
+  if (isNaN(value)) return sum;
+
+  return sum + value;
+}, 0);
 
     const totalOrders = new Set(rows.map(row => row["SO#"])).size;
     const dealerCount = new Set(rows.map(row => row["DEALER'S NAME"])).size;
