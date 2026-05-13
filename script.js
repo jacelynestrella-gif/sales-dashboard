@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyF44l5i6C-kqwiFDIXlfmgXVCfHiastoiy9VdniI0VAqm0tgtBcC8eeBbOT-nvqDQ_/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw1liweiEEsdNk34TtR4pEH0El5-1UPYSrEb1s0fZGiCK8PXRsNOda5Wxg1ddQuFzHe/exec";
 
 let dashboardData = {};
 let salesChart;
@@ -9,6 +9,12 @@ fetch(API_URL)
   .then(data => {
     dashboardData = data;
 
+    dashboardData.kpi = cleanRows(data.kpi);
+    dashboardData.brandTarget = cleanRows(data.brandTarget);
+    dashboardData.topDealers = cleanRows(data.topDealers);
+    dashboardData.monthlySales = cleanRows(data.monthlySales);
+    dashboardData.filters = cleanRows(data.filters);
+
     populateFilters();
     updateDashboard();
 
@@ -16,20 +22,23 @@ fetch(API_URL)
     document.getElementById("dashboard").style.display = "block";
   })
   .catch(error => {
-    console.error("Error loading data:", error);
-    document.getElementById("loading").innerHTML = "<p>Failed to load dashboard.</p>";
+    console.error(error);
+    document.getElementById("loading").innerHTML =
+      `<p>Failed to load dashboard.<br>${error.message}</p>`;
   });
+
+function cleanRows(rows = []) {
+  return rows.filter(row => {
+    return row["Year"] !== "Year" &&
+           row["Month"] !== "Month" &&
+           row["Brand"] !== "Brand" &&
+           row["Dealer"] !== "Dealer";
+  });
+}
 
 function cleanNumber(value) {
   if (!value) return 0;
-
-  return Number(
-    String(value)
-      .replace(/₱/g, "")
-      .replace(/,/g, "")
-      .replace(/%/g, "")
-      .trim()
-  ) || 0;
+  return Number(String(value).replace(/[₱,%\s,]/g, "")) || 0;
 }
 
 function formatPeso(value) {
@@ -43,8 +52,8 @@ function populateFilters() {
   const yearFilter = document.getElementById("yearFilter");
   const monthFilter = document.getElementById("monthFilter");
 
-  const years = [...new Set((dashboardData.filters || []).map(r => r["Years"]).filter(Boolean))];
-  const months = [...new Set((dashboardData.filters || []).map(r => r["Months"]).filter(Boolean))];
+  const years = [...new Set(dashboardData.kpi.map(r => r["Year"]).filter(Boolean))].sort();
+  const months = [...new Set(dashboardData.kpi.map(r => r["Month"]).filter(Boolean))];
 
   years.forEach(year => {
     yearFilter.innerHTML += `<option value="${year}">${year}</option>`;
@@ -59,22 +68,20 @@ function populateFilters() {
 }
 
 function filterRows(rows) {
-  const selectedYear = document.getElementById("yearFilter").value;
-  const selectedMonth = document.getElementById("monthFilter").value;
+  const year = document.getElementById("yearFilter").value;
+  const month = document.getElementById("monthFilter").value;
 
   return rows.filter(row => {
-    const yearMatch = selectedYear === "ALL" || row["Year"] == selectedYear;
-    const monthMatch = selectedMonth === "ALL" || row["Month"] == selectedMonth;
-
-    return yearMatch && monthMatch;
+    return (year === "ALL" || row["Year"] == year) &&
+           (month === "ALL" || row["Month"] == month);
   });
 }
 
 function updateDashboard() {
-  const kpiRows = filterRows(dashboardData.kpi || []);
-  const brandRows = filterRows(dashboardData.brandTarget || []);
-  const dealerRows = filterRows(dashboardData.topDealers || []);
-  const monthlyRows = filterRows(dashboardData.monthlySales || []);
+  const kpiRows = filterRows(dashboardData.kpi);
+  const brandRows = filterRows(dashboardData.brandTarget);
+  const dealerRows = filterRows(dashboardData.topDealers);
+  const monthlyRows = filterRows(dashboardData.monthlySales);
 
   updateKPI(kpiRows);
   updateActualVsTarget(brandRows);
@@ -84,17 +91,9 @@ function updateDashboard() {
 }
 
 function updateKPI(rows) {
-  const totalSales = rows.reduce((sum, row) => {
-    return sum + cleanNumber(row["Total Sales"]);
-  }, 0);
-
-  const totalOrders = rows.reduce((sum, row) => {
-    return sum + cleanNumber(row["Total Orders"]);
-  }, 0);
-
-  const dealerCount = rows.reduce((sum, row) => {
-    return sum + cleanNumber(row["Dealer Count"]);
-  }, 0);
+  const totalSales = rows.reduce((s, r) => s + cleanNumber(r["Total Sales"]), 0);
+  const totalOrders = rows.reduce((s, r) => s + cleanNumber(r["Total Orders"]), 0);
+  const dealerCount = rows.reduce((s, r) => s + cleanNumber(r["Dealer Count"]), 0);
 
   document.getElementById("totalSales").textContent = formatPeso(totalSales);
   document.getElementById("totalOrders").textContent = totalOrders.toLocaleString();
@@ -102,119 +101,64 @@ function updateKPI(rows) {
 }
 
 function updateActualVsTarget(rows) {
-  const summary = {};
+  const labels = rows.map(r => r["Brand"]);
+  const actual = rows.map(r => cleanNumber(r["Actual"]));
+  const target = rows.map(r => cleanNumber(r["Target"]));
 
-  rows.forEach(row => {
-    const brand = row["Brand"] || "Unknown";
-
-    if (!summary[brand]) {
-      summary[brand] = {
-        actual: 0,
-        target: 0
-      };
-    }
-
-    summary[brand].actual += cleanNumber(row["Actual"]);
-    summary[brand].target += cleanNumber(row["Target"]);
-  });
-
-  const labels = Object.keys(summary);
-  const actualValues = labels.map(brand => summary[brand].actual);
-  const targetValues = labels.map(brand => summary[brand].target);
-
-  if (actualTargetChart) {
-    actualTargetChart.destroy();
-  }
+  if (actualTargetChart) actualTargetChart.destroy();
 
   actualTargetChart = new Chart(document.getElementById("actualTargetChart"), {
     type: "bar",
     data: {
       labels,
       datasets: [
-        {
-          label: "Actual",
-          data: actualValues
-        },
-        {
-          label: "Target",
-          data: targetValues,
-          type: "line"
-        }
+        { label: "Actual", data: actual },
+        { label: "Target", data: target, type: "line" }
       ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: {
-            color: "white"
-          }
-        }
-      },
+      plugins: { legend: { labels: { color: "white" } } },
       scales: {
-        x: {
-          ticks: {
-            color: "white"
-          }
-        },
-        y: {
-          ticks: {
-            color: "white"
-          }
-        }
+        x: { ticks: { color: "white" } },
+        y: { ticks: { color: "white" } }
       }
     }
   });
 }
 
 function updateBrandTargetTable(rows) {
-  const summary = {};
-
-  rows.forEach(row => {
-    const brand = row["Brand"] || "Unknown";
-
-    if (!summary[brand]) {
-      summary[brand] = {
-        target: 0,
-        actual: 0,
-        balance: 0,
-        commission: 0
-      };
-    }
-
-    summary[brand].target += cleanNumber(row["Target"]);
-    summary[brand].actual += cleanNumber(row["Actual"]);
-    summary[brand].balance += cleanNumber(row["Balance"]);
-    summary[brand].commission += cleanNumber(row["Commission"]);
-  });
-
   let totalTarget = 0;
   let totalActual = 0;
   let totalBalance = 0;
   let totalCommission = 0;
 
-  const tableRows = Object.entries(summary).map(([brand, item]) => {
-    const percentage = item.target > 0 ? item.actual / item.target : 0;
+  const html = rows.map(row => {
+    const target = cleanNumber(row["Target"]);
+    const actual = cleanNumber(row["Actual"]);
+    const balance = cleanNumber(row["Balance"]);
+    const commission = cleanNumber(row["Commission"]);
+    const percent = target ? Math.round((actual / target) * 100) + "%" : "-";
 
-    totalTarget += item.target;
-    totalActual += item.actual;
-    totalBalance += item.balance;
-    totalCommission += item.commission;
+    totalTarget += target;
+    totalActual += actual;
+    totalBalance += balance;
+    totalCommission += commission;
 
     return `
       <tr>
-        <td>${brand}</td>
-        <td>${formatPeso(item.target)}</td>
-        <td>${item.actual ? formatPeso(item.actual) : "-"}</td>
-        <td>${item.balance ? formatPeso(item.balance) : "-"}</td>
-        <td>${percentage ? Math.round(percentage * 100) + "%" : "-"}</td>
-        <td>${item.commission ? formatPeso(item.commission) : "-"}</td>
+        <td>${row["Brand"]}</td>
+        <td>${formatPeso(target)}</td>
+        <td>${actual ? formatPeso(actual) : "-"}</td>
+        <td>${balance ? formatPeso(balance) : "-"}</td>
+        <td>${percent}</td>
+        <td>${commission ? formatPeso(commission) : "-"}</td>
       </tr>
     `;
   }).join("");
 
-  document.getElementById("brandTargetTable").innerHTML = tableRows + `
+  document.getElementById("brandTargetTable").innerHTML = html + `
     <tr class="total-row">
       <td>TOTAL</td>
       <td>${formatPeso(totalTarget)}</td>
@@ -227,69 +171,42 @@ function updateBrandTargetTable(rows) {
 }
 
 function updateMonthlyChart(rows) {
-  const monthlySales = {};
+  const summary = {};
 
   rows.forEach(row => {
-    const month = row["Month"] || "Unknown";
-    monthlySales[month] = (monthlySales[month] || 0) + cleanNumber(row["Total Sales"]);
+    const month = row["Month"];
+    summary[month] = (summary[month] || 0) + cleanNumber(row["Total Sales"]);
   });
 
-  if (salesChart) {
-    salesChart.destroy();
-  }
+  if (salesChart) salesChart.destroy();
 
   salesChart = new Chart(document.getElementById("salesChart"), {
     type: "bar",
     data: {
-      labels: Object.keys(monthlySales),
-      datasets: [{
-        label: "Monthly Sales",
-        data: Object.values(monthlySales)
-      }]
+      labels: Object.keys(summary),
+      datasets: [{ label: "Monthly Sales", data: Object.values(summary) }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: {
-            color: "white"
-          }
-        }
-      },
+      plugins: { legend: { labels: { color: "white" } } },
       scales: {
-        x: {
-          ticks: {
-            color: "white"
-          }
-        },
-        y: {
-          ticks: {
-            color: "white"
-          }
-        }
+        x: { ticks: { color: "white" } },
+        y: { ticks: { color: "white" } }
       }
     }
   });
 }
 
 function updateDealers(rows) {
-  const dealerSales = {};
-
-  rows.forEach(row => {
-    const dealer = row["Dealer"] || "Unknown";
-    dealerSales[dealer] = (dealerSales[dealer] || 0) + cleanNumber(row["Total Sales"]);
-  });
-
-  const topDealers = Object.entries(dealerSales)
-    .sort((a, b) => b[1] - a[1])
+  const topDealers = rows
+    .sort((a, b) => cleanNumber(b["Total Sales"]) - cleanNumber(a["Total Sales"]))
     .slice(0, 10);
 
-  document.getElementById("dealerTable").innerHTML =
-    topDealers.map(([dealer, total]) => `
-      <tr>
-        <td>${dealer}</td>
-        <td>${formatPeso(total)}</td>
-      </tr>
-    `).join("");
+  document.getElementById("dealerTable").innerHTML = topDealers.map(row => `
+    <tr>
+      <td>${row["Dealer"]}</td>
+      <td>${formatPeso(row["Total Sales"])}</td>
+    </tr>
+  `).join("");
 }
