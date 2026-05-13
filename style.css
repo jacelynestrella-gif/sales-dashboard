@@ -414,3 +414,39 @@ th {
 }
 
 
+#dealerBreakdownCards {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  #tabDealerBreakdown table {
+    display: none !important;
+  }
+
+  #dealerBreakdownCards {
+    display: block;
+  }
+
+  .dealer-mobile-card {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+
+  .dealer-mobile-card div {
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .dealer-mobile-card strong {
+    color: #9ca3af;
+  }
+}
+
+
+
+
+
