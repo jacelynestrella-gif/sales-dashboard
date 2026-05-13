@@ -13,6 +13,7 @@ const MONTH_ORDER = [
 
 fetch(API_URL + "?t=" + Date.now())
   .then(res => res.json())
+  .then(d => console.log(d.version, d.dealerBreakdown?.length));
   .then(data => {
     dashboardData = data;
 
