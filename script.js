@@ -352,6 +352,13 @@ function updateDealerBreakdown(rows) {
         <td colspan="5">No dealer breakdown data received for this selected Year/Month.</td>
       </tr>
     `;
+
+    if (cardContainer) {
+      cardContainer.innerHTML = `
+        <div class="dealer-mobile-card">No dealer breakdown data received for this selected Year/Month.</div>
+      `;
+    }
+
     return;
   }
 
@@ -361,6 +368,13 @@ function updateDealerBreakdown(rows) {
         <td colspan="5">No matching dealer, brand, or order found.</td>
       </tr>
     `;
+
+    if (cardContainer) {
+      cardContainer.innerHTML = `
+        <div class="dealer-mobile-card">No matching dealer, brand, or order found.</div>
+      `;
+    }
+
     return;
   }
 
@@ -381,28 +395,27 @@ function updateDealerBreakdown(rows) {
       </tr>
     `;
   }).join("");
+
+  if (cardContainer) {
+    cardContainer.innerHTML = filtered.map(row => {
+      const dealer = getValue(row, ["Dealer", "DEALER", "Dealer Name", "DEALER'S NAME"]);
+      const brand = getValue(row, ["Brand", "BRAND"]);
+      const order = getValue(row, ["Order", "ORDER"]);
+      const qty = getValue(row, ["Total Qty", "TOTAL QTY", "Qty", "QTY"]);
+      const sales = getValue(row, ["Total Sales", "TOTAL SALES", "Sales", "TOTAL"]);
+
+      return `
+        <div class="dealer-mobile-card">
+          <div><strong>Dealer:</strong> ${dealer}</div>
+          <div><strong>Brand:</strong> ${brand}</div>
+          <div><strong>Order:</strong> ${order}</div>
+          <div><strong>Qty:</strong> ${cleanNumber(qty).toLocaleString()}</div>
+          <div><strong>Sales:</strong> ${formatPeso(sales)}</div>
+        </div>
+      `;
+    }).join("");
+  }
 }
-
-if (cardContainer) {
-  cardContainer.innerHTML = filtered.map(row => {
-    const dealer = getValue(row, ["Dealer", "DEALER", "Dealer Name", "DEALER'S NAME"]);
-    const brand = getValue(row, ["Brand", "BRAND"]);
-    const order = getValue(row, ["Order", "ORDER"]);
-    const qty = getValue(row, ["Total Qty", "TOTAL QTY", "Qty", "QTY"]);
-    const sales = getValue(row, ["Total Sales", "TOTAL SALES", "Sales", "TOTAL"]);
-
-    return `
-      <div class="dealer-mobile-card">
-        <div><strong>Dealer:</strong> ${dealer}</div>
-        <div><strong>Brand:</strong> ${brand}</div>
-        <div><strong>Order:</strong> ${order}</div>
-        <div><strong>Qty:</strong> ${cleanNumber(qty).toLocaleString()}</div>
-        <div><strong>Sales:</strong> ${formatPeso(sales)}</div>
-      </div>
-    `;
-  }).join("");
-}
-
 
 function updateBrandChart(rows) {
   const labels = rows.map(r => r["Brand"]);
