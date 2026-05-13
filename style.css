@@ -37,6 +37,7 @@ body {
   text-align: left;
   cursor: pointer;
   font-size: 14px;
+  transition: 0.2s;
 }
 
 .nav-btn:hover,
@@ -372,27 +373,19 @@ th {
   }
 }
 
+/* DEALER BREAKDOWN MOBILE FIX */
+
 @media (max-width: 767px) {
-  .content {
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: hidden;
-  }
-
-  .chart-card {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
   #tabDealerBreakdown .chart-card {
-    padding: 12px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
   }
 
   #tabDealerBreakdown table {
     width: max-content;
-    min-width: 760px;
+    min-width: 850px;
   }
 
   #tabDealerBreakdown th,
@@ -404,24 +397,5 @@ th {
 
   #tabDealerBreakdown .filter-card {
     max-width: 100%;
-  }
-}
-
-
-@media (max-width: 767px) {
-  #tabDealerBreakdown {
-    overflow-x: hidden;
-  }
-
-  #tabDealerBreakdown .chart-card {
-    width: 100%;
-    max-width: calc(100vw - 30px);
-    overflow-x: scroll;
-  }
-
-  #tabDealerBreakdown table {
-    display: table;
-    width: 900px;
-    min-width: 900px;
   }
 }
