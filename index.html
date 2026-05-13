@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sales Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Sales Dashboard</h1>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Total Sales</h3>
+      <p id="totalSales">₱0</p>
+    </div>
+
+    <div class="card">
+      <h3>Total Orders</h3>
+      <p id="totalOrders">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Dealer Count</h3>
+      <p id="dealerCount">0</p>
+    </div>
+  </div>
+
+  <h2>Top Dealers</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Dealer</th>
+        <th>Total Sales</th>
+      </tr>
+    </thead>
+    <tbody id="dealerTable"></tbody>
+  </table>
+
+  <script src="script.js"></script>
+</body>
+</html>
