@@ -312,14 +312,27 @@ function populateDealerList() {
 }
 
 function updateDealerBreakdown(rows) {
-  const selectedDealer = document.getElementById("dealerFilter").value;
+  const searchValue = document
+    .getElementById("dealerFilter")
+    .value
+    .toLowerCase()
+    .trim();
 
-  const filtered = selectedDealer
-    ? rows.filter(row => row["Dealer"] === selectedDealer)
-    : rows.slice(0, 50);
+  const filtered = rows.filter(row => {
+    const dealer = String(row["Dealer"] || "").toLowerCase();
+    const brand = String(row["Brand"] || "").toLowerCase();
+    const order = String(row["Order"] || "").toLowerCase();
+
+    return (
+      dealer.includes(searchValue) ||
+      brand.includes(searchValue) ||
+      order.includes(searchValue)
+    );
+  });
 
   document.getElementById("dealerBreakdownTable").innerHTML = filtered.map(row => `
     <tr>
+      <td>${row["Dealer"]}</td>
       <td>${row["Brand"]}</td>
       <td>${row["Order"]}</td>
       <td>${cleanNumber(row["Total Qty"]).toLocaleString()}</td>
