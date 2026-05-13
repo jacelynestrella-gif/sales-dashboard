@@ -374,49 +374,6 @@ th {
 }
 
 
-/* DEALER BREAKDOWN MOBILE CARD VIEW */
-@media (max-width: 767px) {
-  #tabDealerBreakdown table,
-  #tabDealerBreakdown thead,
-  #tabDealerBreakdown tbody,
-  #tabDealerBreakdown th,
-  #tabDealerBreakdown td,
-  #tabDealerBreakdown tr {
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-}
-
-  #tabDealerBreakdown thead {
-    display: none;
-  }
-
-  #tabDealerBreakdown tr {
-    background: #111827;
-    margin-bottom: 12px;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid #374151;
-  }
-
-  #tabDealerBreakdown td {
-    border: none;
-    padding: 6px 0;
-    white-space: normal;
-    font-size: 12px;
-  }
-
-  #tabDealerBreakdown td:nth-child(1)::before { content: "Dealer: "; font-weight: bold; color: #9ca3af; }
-  #tabDealerBreakdown td:nth-child(2)::before { content: "Brand: "; font-weight: bold; color: #9ca3af; }
-  #tabDealerBreakdown td:nth-child(3)::before { content: "Order: "; font-weight: bold; color: #9ca3af; }
-  #tabDealerBreakdown td:nth-child(4)::before { content: "Qty: "; font-weight: bold; color: #9ca3af; }
-  #tabDealerBreakdown td:nth-child(5)::before { content: "Sales: "; font-weight: bold; color: #9ca3af; }
-}
-
-
-#dealerBreakdownCards {
-  display: none;
-}
 
 @media (max-width: 767px) {
   #tabDealerBreakdown table {
