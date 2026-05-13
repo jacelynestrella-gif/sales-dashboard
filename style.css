@@ -382,10 +382,10 @@ th {
   #tabDealerBreakdown th,
   #tabDealerBreakdown td,
   #tabDealerBreakdown tr {
-    display: block;
-    width: 100%;
-    min-width: 0;
-  }
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
 
   #tabDealerBreakdown thead {
     display: none;
