@@ -375,6 +375,10 @@ th {
 
 
 
+#dealerBreakdownCards {
+  display: none;
+}
+
 @media (max-width: 767px) {
   #tabDealerBreakdown table {
     display: none !important;
@@ -402,7 +406,6 @@ th {
     color: #9ca3af;
   }
 }
-
 
 
 
