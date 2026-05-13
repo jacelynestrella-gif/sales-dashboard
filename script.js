@@ -344,6 +344,7 @@ function updateDealerBreakdown(rows) {
   });
 
   const tbody = document.getElementById("dealerBreakdownTable");
+  const cardContainer = document.getElementById("dealerBreakdownCards");
 
   if (!rows.length) {
     tbody.innerHTML = `
@@ -381,6 +382,27 @@ function updateDealerBreakdown(rows) {
     `;
   }).join("");
 }
+
+if (cardContainer) {
+  cardContainer.innerHTML = filtered.map(row => {
+    const dealer = getValue(row, ["Dealer", "DEALER", "Dealer Name", "DEALER'S NAME"]);
+    const brand = getValue(row, ["Brand", "BRAND"]);
+    const order = getValue(row, ["Order", "ORDER"]);
+    const qty = getValue(row, ["Total Qty", "TOTAL QTY", "Qty", "QTY"]);
+    const sales = getValue(row, ["Total Sales", "TOTAL SALES", "Sales", "TOTAL"]);
+
+    return `
+      <div class="dealer-mobile-card">
+        <div><strong>Dealer:</strong> ${dealer}</div>
+        <div><strong>Brand:</strong> ${brand}</div>
+        <div><strong>Order:</strong> ${order}</div>
+        <div><strong>Qty:</strong> ${cleanNumber(qty).toLocaleString()}</div>
+        <div><strong>Sales:</strong> ${formatPeso(sales)}</div>
+      </div>
+    `;
+  }).join("");
+}
+
 
 function updateBrandChart(rows) {
   const labels = rows.map(r => r["Brand"]);
