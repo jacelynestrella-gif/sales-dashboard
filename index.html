@@ -6,36 +6,49 @@
 </head>
 <body>
 
-  <h1>Sales Dashboard</h1>
-
-  <div class="cards">
-    <div class="card">
-      <h3>Total Sales</h3>
-      <p id="totalSales">₱0</p>
-    </div>
-
-    <div class="card">
-      <h3>Total Orders</h3>
-      <p id="totalOrders">0</p>
-    </div>
-
-    <div class="card">
-      <h3>Dealer Count</h3>
-      <p id="dealerCount">0</p>
-    </div>
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Loading dashboard...</p>
   </div>
 
-  <h2>Top Dealers</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Dealer</th>
-        <th>Total Sales</th>
-      </tr>
-    </thead>
-    <tbody id="dealerTable"></tbody>
-  </table>
+  <div id="dashboard" style="display:none;">
+    <h1>Sales Dashboard</h1>
 
+    <div class="cards">
+      <div class="card">
+        <h3>Total Sales</h3>
+        <p id="totalSales">₱0</p>
+      </div>
+
+      <div class="card">
+        <h3>Total Orders</h3>
+        <p id="totalOrders">0</p>
+      </div>
+
+      <div class="card">
+        <h3>Dealer Count</h3>
+        <p id="dealerCount">0</p>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h2>Monthly Sales</h2>
+      <canvas id="salesChart"></canvas>
+    </div>
+
+    <h2>Top Dealers</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Dealer</th>
+          <th>Total Sales</th>
+        </tr>
+      </thead>
+      <tbody id="dealerTable"></tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
