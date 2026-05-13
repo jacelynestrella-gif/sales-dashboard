@@ -371,3 +371,24 @@ th {
     display: block;
   }
 }
+
+@media (max-width: 767px) {
+  .chart-card {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .chart-card table {
+    min-width: 900px;
+  }
+
+  #tabDealerBreakdown .chart-card {
+    display: block;
+    overflow-x: auto;
+  }
+
+  #dealerBreakdownTable td,
+  #dealerBreakdownTable th {
+    white-space: nowrap;
+  }
+}
