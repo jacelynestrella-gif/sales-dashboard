@@ -133,13 +133,16 @@ function populateFilters() {
 }
 
 function filterRows(rows) {
-  const year = document.getElementById("yearFilter").value;
-  const month = document.getElementById("monthFilter").value;
+  const year = String(document.getElementById("yearFilter").value).trim();
+  const month = String(document.getElementById("monthFilter").value).trim();
 
-  return rows.filter(row =>
-    (year === "ALL" || row["Year"] == year) &&
-    (month === "ALL" || row["Month"] == month)
-  );
+  return rows.filter(row => {
+    const rowYear = String(row["Year"] || "").trim();
+    const rowMonth = String(row["Month"] || "").trim();
+
+    return (year === "ALL" || rowYear === year) &&
+           (month === "ALL" || rowMonth === month);
+  });
 }
 
 function updateDashboard() {
@@ -256,30 +259,44 @@ function updateMonthlyChart(rows) {
   });
 }
 
-function updateDealers(rows) {
-  const topDealers = rows
-    .sort((a, b) => cleanNumber(b["Total Sales"]) - cleanNumber(a["Total Sales"]))
-    .slice(0, 10);
+function updateDealerBreakdown(rows) {
+  const searchValue = String(document.getElementById("dealerFilter").value || "")
+    .toLowerCase()
+    .trim();
 
-  document.getElementById("dealerTable").innerHTML = topDealers.map(row => `
+  const filtered = rows.filter(row => {
+    const dealer = String(row["Dealer"] || "").toLowerCase();
+    const brand = String(row["Brand"] || "").toLowerCase();
+    const order = String(row["Order"] || "").toLowerCase();
+
+    if (!searchValue) return true;
+
+    return dealer.includes(searchValue) ||
+           brand.includes(searchValue) ||
+           order.includes(searchValue);
+  });
+
+  const tbody = document.getElementById("dealerBreakdownTable");
+
+  if (!filtered.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5">No dealer breakdown found for selected period.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(row => `
     <tr>
-      <td>${row["Dealer"]}</td>
+      <td>${row["Dealer"] || ""}</td>
+      <td>${row["Brand"] || ""}</td>
+      <td>${row["Order"] || ""}</td>
+      <td>${cleanNumber(row["Total Qty"]).toLocaleString()}</td>
       <td>${formatPeso(row["Total Sales"])}</td>
     </tr>
   `).join("");
 }
-
-function updateTopDealerPerBrand(rows) {
-  const brandBest = {};
-
-  rows.forEach(row => {
-    const brand = row["Brand"];
-    const sales = cleanNumber(row["Total Sales"]);
-
-    if (!brandBest[brand] || sales > cleanNumber(brandBest[brand]["Total Sales"])) {
-      brandBest[brand] = row;
-    }
-  });
 
   const html = Object.values(brandBest)
     .sort((a, b) => String(a["Brand"]).localeCompare(String(b["Brand"])))
