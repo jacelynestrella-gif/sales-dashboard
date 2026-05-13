@@ -214,7 +214,7 @@ function updateBrandTargetTable(rows) {
 
     return `
       <tr>
-        <td>${row["Brand"]}</td>
+        <td>${row["Brand"] || ""}</td>
         <td>${formatPeso(target)}</td>
         <td>${actual ? formatPeso(actual) : "-"}</td>
         <td>${balance ? formatPeso(balance) : "-"}</td>
@@ -259,6 +259,62 @@ function updateMonthlyChart(rows) {
   });
 }
 
+function updateDealers(rows) {
+  const topDealers = rows
+    .sort((a, b) => cleanNumber(b["Total Sales"]) - cleanNumber(a["Total Sales"]))
+    .slice(0, 10);
+
+  document.getElementById("dealerTable").innerHTML = topDealers.map(row => `
+    <tr>
+      <td>${row["Dealer"] || ""}</td>
+      <td>${formatPeso(row["Total Sales"])}</td>
+    </tr>
+  `).join("");
+}
+
+function updateTopDealerPerBrand(rows) {
+  const brandBest = {};
+
+  rows.forEach(row => {
+    const brand = row["Brand"];
+    const sales = cleanNumber(row["Total Sales"]);
+
+    if (!brandBest[brand] || sales > cleanNumber(brandBest[brand]["Total Sales"])) {
+      brandBest[brand] = row;
+    }
+  });
+
+  const html = Object.values(brandBest)
+    .sort((a, b) => String(a["Brand"]).localeCompare(String(b["Brand"])))
+    .map(row => `
+      <tr>
+        <td>${row["Brand"] || ""}</td>
+        <td>${row["Dealer"] || ""}</td>
+        <td>${formatPeso(row["Total Sales"])}</td>
+      </tr>
+    `).join("");
+
+  document.getElementById("topDealerPerBrandTable").innerHTML = html;
+}
+
+function populateDealerList() {
+  const datalist = document.getElementById("dealerList");
+  const rows = filterRows(dashboardData.dealerBreakdown || []);
+
+  const dealers = [...new Set(
+    rows.map(r => r["Dealer"]).filter(Boolean)
+  )].sort();
+
+  datalist.innerHTML = dealers.map(dealer =>
+    `<option value="${dealer}"></option>`
+  ).join("");
+
+  const dealerFilter = document.getElementById("dealerFilter");
+  dealerFilter.oninput = () => {
+    updateDealerBreakdown(filterRows(dashboardData.dealerBreakdown || []));
+  };
+}
+
 function updateDealerBreakdown(rows) {
   const searchValue = String(document.getElementById("dealerFilter").value || "")
     .toLowerCase()
@@ -298,66 +354,6 @@ function updateDealerBreakdown(rows) {
   `).join("");
 }
 
-  const html = Object.values(brandBest)
-    .sort((a, b) => String(a["Brand"]).localeCompare(String(b["Brand"])))
-    .map(row => `
-      <tr>
-        <td>${row["Brand"]}</td>
-        <td>${row["Dealer"]}</td>
-        <td>${formatPeso(row["Total Sales"])}</td>
-      </tr>
-    `).join("");
-
-  document.getElementById("topDealerPerBrandTable").innerHTML = html;
-}
-
-function populateDealerList() {
-  const datalist = document.getElementById("dealerList");
-  const rows = filterRows(dashboardData.dealerBreakdown || []);
-
-  const dealers = [...new Set(
-    rows.map(r => r["Dealer"]).filter(Boolean)
-  )].sort();
-
-  datalist.innerHTML = dealers.map(dealer =>
-    `<option value="${dealer}"></option>`
-  ).join("");
-
-  document.getElementById("dealerFilter").addEventListener("input", () => {
-    updateDealerBreakdown(filterRows(dashboardData.dealerBreakdown || []));
-  });
-}
-
-function updateDealerBreakdown(rows) {
-  const searchValue = document
-    .getElementById("dealerFilter")
-    .value
-    .toLowerCase()
-    .trim();
-
-  const filtered = rows.filter(row => {
-    const dealer = String(row["Dealer"] || "").toLowerCase();
-    const brand = String(row["Brand"] || "").toLowerCase();
-    const order = String(row["Order"] || "").toLowerCase();
-
-    return (
-      dealer.includes(searchValue) ||
-      brand.includes(searchValue) ||
-      order.includes(searchValue)
-    );
-  });
-
-  document.getElementById("dealerBreakdownTable").innerHTML = filtered.map(row => `
-    <tr>
-      <td>${row["Dealer"]}</td>
-      <td>${row["Brand"]}</td>
-      <td>${row["Order"]}</td>
-      <td>${cleanNumber(row["Total Qty"]).toLocaleString()}</td>
-      <td>${formatPeso(row["Total Sales"])}</td>
-    </tr>
-  `).join("");
-}
-
 function updateBrandChart(rows) {
   const labels = rows.map(r => r["Brand"]);
   const values = rows.map(r => cleanNumber(r["Actual"]));
@@ -390,8 +386,8 @@ function updateTrendChart(rows) {
   });
 
   yearRows.forEach(row => {
-    summary[row["Month"]] =
-      (summary[row["Month"]] || 0) + cleanNumber(row["Total Sales"]);
+    const month = row["Month"];
+    summary[month] = (summary[month] || 0) + cleanNumber(row["Total Sales"]);
   });
 
   if (trendChart) trendChart.destroy();
