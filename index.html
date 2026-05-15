@@ -4,182 +4,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sales Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="fix.css?v=11">
 </head>
 <body>
-
-<div id="loading">
-  <div class="spinner"></div>
-  <p>Loading dashboard...</p>
-</div>
-
+<div id="loading"><div class="spinner"></div><p>Loading dashboard...</p></div>
 <button id="burgerBtn" class="burger-btn">☰</button>
 <div id="overlay" class="overlay"></div>
-
 <div id="dashboard" style="display:none;">
   <div class="layout">
-
     <aside id="sidebar" class="sidebar">
       <h2>Sales Dashboard</h2>
-
       <button class="nav-btn active" data-tab="tabDashboard">Dashboard</button>
       <button class="nav-btn" data-tab="tabDealerBreakdown">Dealer Breakdown</button>
+      <button class="nav-btn" data-tab="tabBrandItems">Brand Items</button>
       <button class="nav-btn" data-tab="tabTopDealers">Top Dealers</button>
       <button class="nav-btn" data-tab="tabBrandPerformance">Brand Performance</button>
       <button class="nav-btn" data-tab="tabSalesTrend">Sales Trend</button>
       <button class="nav-btn" data-tab="tabRawData">Raw Data</button>
-
       <div class="filter-box">
-        <label>Year</label>
-        <select id="yearFilter">
-          <option value="ALL">All</option>
-        </select>
-
-        <label>Month</label>
-        <select id="monthFilter">
-          <option value="ALL">All</option>
-        </select>
+        <label>Year</label><select id="yearFilter"><option value="ALL">All</option></select>
+        <label>Month</label><select id="monthFilter"><option value="ALL">All</option></select>
+      </div>
+      <div class="theme-toggle-box">
+        <span>Theme</span>
+        <button id="themeToggle" type="button" class="theme-toggle-btn"><span id="themeToggleText">Dark</span></button>
       </div>
     </aside>
-
     <main class="content">
-
       <section id="tabDashboard" class="tab-content active">
         <h1>Dashboard</h1>
-
         <div class="cards">
-          <div class="card">
-            <h3>Total Sales</h3>
-            <p id="totalSales">₱0</p>
-          </div>
-
-          <div class="card">
-            <h3>Total Orders</h3>
-            <p id="totalOrders">0</p>
-          </div>
-
-          <div class="card">
-            <h3>Dealer Count</h3>
-            <p id="dealerCount">0</p>
-          </div>
+          <div class="card"><h3>Total Sales</h3><p id="totalSales">₱0</p></div>
+          <div class="card"><h3>Total Orders</h3><p id="totalOrders">0</p></div>
+          <div class="card"><h3>Dealer Count</h3><p id="dealerCount">0</p></div>
         </div>
-
         <div class="grid-section">
-          <div class="chart-card small-chart">
-            <h2>Actual vs Target</h2>
-            <canvas id="actualTargetChart"></canvas>
-          </div>
-
-          <div class="chart-card">
-            <h2>Target Balance</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Brand</th>
-                  <th>Target</th>
-                  <th>Actual</th>
-                  <th>Balance</th>
-                  <th>%</th>
-                  <th>Commission</th>
-                </tr>
-              </thead>
-              <tbody id="brandTargetTable"></tbody>
-            </table>
-          </div>
+          <div class="chart-card small-chart"><h2>Actual vs Target</h2><canvas id="actualTargetChart"></canvas></div>
+          <div class="chart-card"><h2>Target Balance</h2><table><thead><tr><th>Brand</th><th>Target</th><th>Actual</th><th>Balance</th><th>%</th><th>Commission</th></tr></thead><tbody id="brandTargetTable"></tbody></table></div>
         </div>
-
-        <div class="chart-card">
-          <h2>Monthly Sales</h2>
-          <canvas id="salesChart"></canvas>
-        </div>
+        <div class="chart-card auto-height"><h2>Daily Sales by Week</h2><div class="weekly-filter-bar"><div><label>Date From</label><input type="date" id="weeklyStartDate"></div><div><label>Date To</label><input type="date" id="weeklyEndDate"></div><button id="weeklyResetBtn" type="button">Current Week</button></div><div id="weeklySalesCharts" class="weekly-sales-grid"></div></div>
       </section>
-
-      <section id="tabDealerBreakdown" class="tab-content">
-        <h1>Dealer Breakdown</h1>
-
-        <div class="filter-card">
-          <label>Search Dealer</label>
-          <input list="dealerList" id="dealerFilter" placeholder="Type or select dealer...">
-          <datalist id="dealerList"></datalist>
-        </div>
-
-        <div class="chart-card auto-height">
-          <h2>Dealer Purchase Breakdown</h2>
-          <table>
-            <thead>
-              <tr>
-               <th>Dealer</th>
-               <th>Brand</th>
-               <th>Order</th>
-               <th>Total Qty</th>
-               <th>Total Sales</th>
-              </tr>
-            </thead>
-            <tbody id="dealerBreakdownTable"></tbody>
-          </table>
-
-          <div id="dealerBreakdownCards"></div>
-          
-        </div>
-      </section>
-
-      <section id="tabTopDealers" class="tab-content">
-        <h1>Top Dealers</h1>
-
-        <div class="chart-card auto-height">
-          <h2>Overall Top Dealers</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Dealer</th>
-                <th>Total Sales</th>
-              </tr>
-            </thead>
-            <tbody id="dealerTable"></tbody>
-          </table>
-        </div>
-
-        <div class="chart-card auto-height">
-          <h2>Top Dealer Per Brand</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Brand</th>
-                <th>Dealer</th>
-                <th>Total Sales</th>
-              </tr>
-            </thead>
-            <tbody id="topDealerPerBrandTable"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="tabBrandPerformance" class="tab-content">
-        <h1>Brand Performance</h1>
-        <div class="chart-card">
-          <h2>Brand Sales</h2>
-          <canvas id="brandChart"></canvas>
-        </div>
-      </section>
-
-      <section id="tabSalesTrend" class="tab-content">
-        <h1>Sales Trend</h1>
-        <div class="chart-card">
-          <h2>Monthly Trend</h2>
-          <canvas id="trendChart"></canvas>
-        </div>
-      </section>
-
-      <section id="tabRawData" class="tab-content">
-        <h1>Raw Data</h1>
-        <div class="empty-card">Coming soon</div>
-      </section>
-
+      <section id="tabDealerBreakdown" class="tab-content"><h1>Dealer Breakdown</h1><div class="filter-card"><label>Search Dealer</label><input list="dealerList" id="dealerFilter" placeholder="Type or select dealer..."><datalist id="dealerList"></datalist></div><div class="chart-card auto-height"><h2>Dealer Purchase Breakdown</h2><div id="dealerBreakdownAccordion"></div></div></section>
+      <section id="tabBrandItems" class="tab-content"><h1>Brand Items</h1><div class="chart-card auto-height"><h2>Brand Item Breakdown</h2><div id="brandItemsAccordion"></div></div></section>
+      <section id="tabTopDealers" class="tab-content"><h1>Top Dealers</h1><div class="chart-card auto-height"><h2>Overall Top Dealers</h2><table><thead><tr><th>Dealer</th><th>Total Sales</th></tr></thead><tbody id="dealerTable"></tbody></table></div><div class="chart-card auto-height"><h2>Top Dealer Per Brand</h2><table><thead><tr><th>Brand</th><th>Dealer</th><th>Total Sales</th></tr></thead><tbody id="topDealerPerBrandTable"></tbody></table></div></section>
+      <section id="tabBrandPerformance" class="tab-content"><h1>Brand Performance</h1><div class="chart-card"><h2>Brand Sales</h2><canvas id="brandChart"></canvas></div></section>
+      <section id="tabSalesTrend" class="tab-content"><h1>Sales Trend</h1><div class="chart-card"><h2>Monthly Trend</h2><canvas id="trendChart"></canvas></div></section>
+      <section id="tabRawData" class="tab-content"><h1>Raw Data</h1><div class="chart-card auto-height raw-data-card"><div class="raw-toolbar"><button id="rawAddBtn" type="button" class="raw-add-btn">+ Add Record</button><input id="rawSearchInput" type="text" placeholder="Search raw data..."><select id="rawRowsPerPage"><option value="10">10 rows</option><option value="25" selected>25 rows</option><option value="50">50 rows</option><option value="100">100 rows</option></select></div><div id="rawTableInfo" class="raw-table-info">Loading raw data...</div><div id="rawDataTableContainer"></div><div id="rawPagination" class="raw-pagination"></div></div></section>
     </main>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="script.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js?v=14"></script>
+<script src="supabase-load-fix.js?v=1"></script>
+<script src="filter-fix.js?v=1"></script>
+<script src="weekly-summary.js?v=5"></script>
+<script src="buying-summary.js?v=2"></script>
+<script src="theme-toggle.js?v=1"></script>
+<script src="supabase-crud.js?v=2"></script>
+<script src="raw-data.js?v=3"></script>
+<script src="raw-data-supabase-override.js"></script>
+<script src="raw-delete.js?v=1"></script>
+<script src="raw-ui-fix.js?v=1"></script>
 </body>
 </html>
